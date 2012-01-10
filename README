@@ -1,0 +1,69 @@
+#    Copyright 2011 Merijntje Tak
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, version 3 of the License.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
+#
+#    tracestore.pl - Store traceroutes based on NetFlow data
+#
+#   This scripts processes a flowd database file, gets a list of all hosts 
+#    contacted, does a traceroute to them and stores the result in a database.
+#    This data can later be analyzed to, for example, map your ISP's AS 
+#    paths.
+#
+#    Usage:
+#     1. Start flowd and let it collect flows (see flowd man page)
+#     1. Configure the variables in the script
+#     2. Run the script
+#
+#    Dependencies:
+#     - Perl module DBD::mysql
+#     - Perl module Net::Traceroute
+#     - flowd (tested with version 0.9.1, www.mindrot.org/projects/flowd/)
+#
+#    Database:
+#    The script is designed to use a MySQL database backend. An example table
+#     structure is provided in the mysql-tracestore.sql file. The file can be
+#     loaded like this:
+#     1. Login to MySQL
+#       $ mysql -u root -p
+#     2. Create a database
+#       mysql> create database tracestore;
+#     3. Create a new user
+#       mysql> grant all on tracestore.* to 'username'@'localhost' identified by 'password';
+#     4. Load the table structures
+#       $ mysql -u username -p tracestore < mysql-tracestore.sql
+#
+#    Variables used in the script:
+#     mysqlHost - Database server hostname
+#     mysqlUser - Database username
+#     mysqlPass - Database password
+#     mysqlName - Database name
+#
+#     flowdFile - flowd database file to be used by the flowd-reader process
+#
+#     flowdSudo - Boolean to indicate whether sudo should be used to run the flowd-reader
+#
+#     flowdBin - Path to flowd-reader binary
+#
+#     sudoBin - Path to sudo binary
+#
+#     processTime - Number of seconds the script has to look back in the flowd database
+#                    for flows to trace. If you put the script in cron, and let it run every
+#                    5 minutes, set this variable to 300.
+#
+#
+#     debugSwitch - turn on for debugging
+#
+#     debugSwitchThreads - turn on for thread debugging
+#
